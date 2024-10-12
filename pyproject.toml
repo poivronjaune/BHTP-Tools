@@ -29,3 +29,6 @@ dev = ["black", "pytest"]
 
 [tool.setuptools.dynamic]
 version = {attr = "bhtp.__version__"}
+
+[project.scripts]
+bhtp = "bhtp.__main__:main"
