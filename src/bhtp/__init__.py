@@ -1,6 +1,5 @@
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 version = __version__
-bidon = version
 
 from bhtp import github
 
