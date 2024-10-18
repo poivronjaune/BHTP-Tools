@@ -7,6 +7,14 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+# For Markdown source files
+#import recommonmark.parser
+#source_parsers = {
+#    '.md': 'recommonmark.parser.CommonMarkParser',
+#}
+#
+#source_suffix = ['.rst', '.md']
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
