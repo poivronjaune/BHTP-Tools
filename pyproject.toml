@@ -25,7 +25,7 @@ requires-python = ">3.10"
 
 [project.optional-dependencies]
 build = ["build","twine"]
-dev = ["black", "pytest"]
+dev = ["black", "pytest", "sphinx", "sphinx-autodoc-typehints", "sphinx-rtd-theme", "recommonmark"]
 
 [tool.setuptools.dynamic]
 version = {attr = "bhtp.__version__"}

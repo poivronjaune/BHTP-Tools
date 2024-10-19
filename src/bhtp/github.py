@@ -21,18 +21,6 @@ class Github:
     branch : str
         The branch of the repository to interact with.
 
-    Methods:
-    -------
-    __str__():
-        Returns the GitHub repository URL.
-    api_content():
-        Returns the GitHub API URL for accessing repository content.
-    repo_content(folder='/'):
-        Retrieves the content of the specified folder in the repository.
-    select_files(file_list, starts_with=''):
-        Filters a list of GitHub file records for CSV files by file type and optional name prefix.
-    load_ohlcv_csv(github_raw_link):
-        Loads and validates OHLCV-formatted data from a GitHub raw link pointing to a CSV file.
     """
     def __init__(self, owner='MapleFrogStudio', repository='DATA-2023-04', branch='main') -> None:
         if owner is None or owner == '' or not isinstance(owner, str):
@@ -48,6 +36,15 @@ class Github:
 
     def __str__(self) -> str:
         #url = f'{self.owner} -> {self.repo} -> {self.branch}'
+        """
+            A python __dunder__ method that assembles the class parameters in a URL String for printingé
+
+        Returns:
+        -------
+        str
+            a URL link to the defined github repository.
+
+        """
         url = f'https://github.com/{self.owner}/{self.repo}/tree/{self.branch}'
         return url
     
