@@ -5,6 +5,7 @@
 
 [![Work in Progress](https://img.shields.io/badge/status-in_progress-yellow)](https://github.com/poivronjaune/BHTP-Tools)
 ![Last Commit](https://img.shields.io/github/last-commit/poivronjaune/BHTP-Tools)
+[![Documentation Status](https://readthedocs.org/projects/bhtp/badge/?version=latest)](https://bhtp.readthedocs.io/en/latest/?badge=latest)
 
 ---
 
@@ -15,7 +16,7 @@
 ### Downloading minute price data  
 ***github.py*** : Contains a Github class methods to download data from a github repo.  
 
-***Example*** to retreive OHLC Data from a (Github repository)[https://github.com/MapleFrogStudio/DATA-2024-08] containing files that start with "nasdaq1" 
+***Example*** to retreive OHLC Data from a [Github repository DATA-2024-08](https://github.com/MapleFrogStudio/DATA-2024-08) containing files that start with "nasdaq1" 
 ```bash
 from bhtp.github import Github
 import pandas as pd
