@@ -26,7 +26,7 @@ Installation
 
 
 Test installation 
-^^^^^^
+^^^^^^^^^^^^^^^^^^
 Once installed open a Python REPL and
 
 ::

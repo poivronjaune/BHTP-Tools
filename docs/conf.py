@@ -38,6 +38,13 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # Disable the "View source" link
 html_show_sourcelink = False
 
+autodoc_default_options = {
+    'private-members': False,
+    'special-members': False,
+    'show-inheritance': True,
+    'show-sourcelink': False,
+}
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
