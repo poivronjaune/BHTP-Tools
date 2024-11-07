@@ -41,6 +41,28 @@ def test_repo_content():
     assert content is not None
     assert isinstance(content, list)
 
+@pytest.mark.parametrize("owner, repo, branch, csv_file", [
+    ('MapleFrogStudio','DATA-2023-04','main', 'NASDAQ-BM0-2023-04-02.csv'),
+    ('PoivronJaune','DATA-2024-07','main','TSX-2024-07-14.csv'),
+])
+def test_Github_load_ohlcv_from_raw_link(owner, repo, branch, csv_file):
+    raw_link = f'https://raw.githubusercontent.com/{owner}/{repo}/refs/heads/{branch}/{csv_file}'
+    g1 = Github(owner=owner, repository=repo, branch=branch)
+    assert g1 is not None
+    df = g1.load_ohlcv_from_raw_link(raw_link)
+    assert df is not None
+    assert len(df) > 1000
+
+@pytest.mark.parametrize("owner, repo, branch, csv_file", [
+    ('MapleFrogStudio','DATA-2023-04','main', 'NASDAQ-BM0-2023-AA-02.csv'),
+    ('PoivronJaune','DATA-2024-07','main','TSX-2024-AA-14.csv'),
+])
+def test_fail_Github_load_ohlcv_from_raw_link(owner, repo, branch, csv_file):
+    raw_link = f'https://raw.githubusercontent.com/{owner}/{repo}/refs/heads/{branch}/{csv_file}'
+    g1 = Github(owner=owner, repository=repo, branch=branch)
+    with pytest.raises(Exception):
+        df = g1.load_ohlcv_from_raw_link(raw_link)
+
 def test_fail_Github_sanity_check_load_ohlcv_for_month():
     g1 = Github()
     with pytest.raises(Exception):

@@ -1,7 +1,7 @@
 Github Module
 --------------
 
-The github module contains the Github Class that implements a bunch of methods to download csv files from github Data Sources.
+The github module (github.py) contains a "Github" Class that implements methods to retreive content information from a repository or download csv stock price files from github data source files.
 
 
 .. automodule:: bhtp.github
