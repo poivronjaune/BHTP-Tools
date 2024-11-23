@@ -97,19 +97,19 @@ class Github:
         list_of_json_objects = content.json()
         return list_of_json_objects
 
-    def select_files(self, file_list, starts_with='') -> list:
+    def select_files(self, repo_content, starts_with='') -> list:
         """
         Filters a list of GitHub file records for CSV files by file type and optional name prefix.
 
-        This function takes a list of dictionaries (`file_list`), each representing a GitHub file 
+        This function takes a list of dictionaries (`repo_content`), each representing a GitHub file 
         record containing file metadata, and filters for CSV files. It returns a list of download 
         URLs for files where the type is 'file' and, optionally, the file name starts with a given prefix.
 
         Parameters:
         ----------
-        file_list : list of dict
+        repo_content : list of dict
             A list of dictionaries, where each dictionary represents a file record with keys 'type' 
-            and 'download_url'. If `file_list` is not a list or the items do not contain the required 
+            and 'download_url'. If `repo_content` is not a list or the items do not contain the required 
             keys, a `ValueError` is raised.
         starts_with : str, optional
             A string prefix for filtering file names. If provided, only files with names starting 
@@ -122,19 +122,19 @@ class Github:
             A list of download URLs (strings) for files matching the criteria.
 
         """
-        if not isinstance(file_list, list):
+        if not isinstance(repo_content, list):
             raise ValueError('Invalid file list or start_with parameters to select files.')
-        one_item = file_list[0]
+        one_item = repo_content[0]
         if not isinstance(one_item, dict):
             raise ValueError('Invalid item in file list parameters to select files.')
         if not 'type' in one_item.keys() or not 'download_url' in one_item.keys():
             raise ValueError('Invalid keys in file list parameters to select files.')
 
         if starts_with == '' or starts_with is None:
-            raw_urls = [record['download_url'] for record in file_list if record['type'] == 'file']
+            raw_urls = [record['download_url'] for record in repo_content if record['type'] == 'file']
         else:
             pattern = pattern = r"^" + starts_with + r".*\.csv$"
-            raw_urls = [record['download_url'] for record in file_list if record['type'] == 'file' and re.match(pattern, record['name'])]
+            raw_urls = [record['download_url'] for record in repo_content if record['type'] == 'file' and re.match(pattern, record['name'])]
 
         return raw_urls
 
@@ -206,7 +206,7 @@ class Github:
 #        file_name = f"DATA-{year:4}-{month:02}"
 #        self.repo  = file_name
         json_content = self.repo_content()
-        raw_urls = self.select_files(file_list=json_content)
+        raw_urls = self.select_files(repo_content=json_content)
         total_files = len(raw_urls)
         month_df = pd.DataFrame()       # Initialize an empty Dataframe to append each file loaded in the month repo
         for i, raw_link in enumerate(raw_urls, start=1):
@@ -217,28 +217,28 @@ class Github:
         
         return month_df
 
-    def load_ohlcv_for_day(self, csv_file_name:str, verbose: bool = False) -> pd.DataFrame:
+    def load_ohlcv_from_file(self, csv_file_name:str, verbose: bool = False) -> pd.DataFrame:
         """
-        Load OHLCV data for a specific day from a GitHub repository.
+        Load OHLCV data for a specific file from a GitHub repository.
 
-        This method retrieves OHLCV (Open, High, Low, Close, Volume) data for a specified day (if available) 
-        from the repository. The method searches for a CSV file matching the year, month, and day provided,
+        This method retrieves OHLCV (Open, High, Low, Close, Volume) data for a specified file (if available) 
+        from the repository. The method searches for a CSV file matching the file name provided,
         and returns the data as a pandas DataFrame.
 
         Parameters:
         ----------
-        csv_file_name : Name of the specific file to be loaded in the repo.
+        csv_file_name : Name of the specific file to be loaded from the repo.
         
         Returns:
         -------
         pd.DataFrame
-            A pandas DataFrame containing the OHLCV data for the specified day. The DataFrame includes
+            A pandas DataFrame containing the OHLCV data for the specified file. The DataFrame includes
             columns for 'Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Adj Close', and 'Volume'.
         
         Example:
         --------
         >>> github = Github(owner="MapleFrogStudio", repository="DATA-2024-07", branch="main")
-        >>> df = github.load_ohlcv_for_day(csv_file_name='NASDAQ-BM0-2024-07-15.csv', verbose=True)
+        >>> df = github.load_ohlcv_from_file(csv_file_name='NASDAQ-BM0-2024-07-15.csv', verbose=True)
         >>> print(df.head())
         """
         json_content = self.repo_content()
@@ -247,11 +247,35 @@ class Github:
         if index is None:
             raise ValueError(f"Not Found - Unable to find {csv_file_name} in {self.repo}")         
         
-        raw_urls = self.select_files(file_list=json_content) 
+        raw_urls = self.select_files(repo_content=json_content) 
         df = self.load_ohlcv_from_raw_link(raw_urls[index])
 
         return df
 
+    def load_ohlcv_for_day(full_dt: str) -> pd.DataFrame:
+        """
+        Load OHLCV data for a specific day from a GitHub repository.
+
+        This method retrieves all OHLCV (Open, High, Low, Close, Volume) data for a specified day (if available) 
+        from the repository. The method searches for all CSV file containing the substring 'full_dt' provided,
+        and returns the data as a pandas DataFrame.
+
+        Parameters:
+        ----------
+        full_dt : A string formatted as 'yyyy-mm-dd' 
+        
+        Returns:
+        -------
+        pd.DataFrame
+            A pandas DataFrame containing the OHLCV data for the specified day. The DataFrame includes
+            columns for 'Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Adj Close', and 'Volume'.
+
+        """
+        if not isinstance(full_dt, 'str'):
+            raise ValueError(f"{full_dt}, is not a string. Please provde a string formatted as yyyy-mm-dd")
+        
+        data = pd.DataFrame()
+        return data
 
 if __name__ == '__main__':                              # pragma: no cover
     # Example loading a small test file
@@ -261,6 +285,9 @@ if __name__ == '__main__':                              # pragma: no cover
     print(g1)
     print(g1.api_content)
     print('======================================')
-    data = g1.load_ohlcv_for_day(csv_file='NASDAQ-CC0-2023-04-03.csv', verbose=True)
-    print(data)
+    repo_json = g1.repo_content() 
+    print(repo_json[0:4])
+    print('======================================')
+    #data = g1.load_ohlcv_from_file(csv_file='NASDAQ-CC0-2023-04-03.csv', verbose=True)
+    #print(data)
 
