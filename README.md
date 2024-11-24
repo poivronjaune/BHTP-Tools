@@ -13,10 +13,35 @@
 
 **BHTP-Tools** is a Python package designed for building and backtesting automated trading strategies. This package offers a range of tools to support working with market data, performing backtests, and handling data from sources like GitHub repositories.
 
+## Installation  
+*We recommend using a virtual environment for this package as it is a development version*
+This package is not published to PyPi yet.  
+Use pip install from the github repository to install locally.  
+This should create a script command to display the version installed.  
+
+```bash
+pip install git+https://github.com/poivronjaune/BHTP-Tools.git
+bhtp
+```
+
+## Modules  
 ### Downloading minute price data  
 ***github.py*** : Contains a Github class methods to download data from a github repo.  
 
-***Example*** to retreive OHLC Data from a [Github repository DATA-2024-08](https://github.com/MapleFrogStudio/DATA-2024-08) containing files that start with "nasdaq1" 
+***Example 1***:  
+To retrieve a full month of data from [Github repository DATA-2024-08](https://github.com/MapleFrogStudio/DATA-2024-08). Set the verbose parameter to True to see the loading progress.  
+  
+<span style="color:red">**Warning**</span>: this repo contains **431** csv files that load 2.6 millions lines of data. It may take several minutes to run (a standard google colab execution takes around 10 minutes).   
+```bash
+from bhtp.github import Github
+import pandas as pd
+
+g = Github(owner='MapleFrogStudio', repository='DATA-2024-04', branch='main') 
+data_df = g.load_ohlcv_for_month(verbose=True)
+print(data_df)
+```
+***Example 2***:  
+To retreive OHLC Data from a [Github repository DATA-2024-08](https://github.com/MapleFrogStudio/DATA-2024-08) containing files that start with "nasdaq1" 
 ```bash
 from bhtp.github import Github
 import pandas as pd
@@ -40,4 +65,26 @@ for file in csv_files:
 
 # Display the concatenated master DataFrame
 print(master_df.head())
+```
 
+### Creating a trading universe  
+***universe.py*** : Class and methods to build a trading universe.  Load data from local csv files or using the Github class to load directly from Github repositories.  
+
+***Example***  
+To create a bunch of timeframes from our 1 minute price data, load some prices from a month and run the following code.  
+Data source is the same as example 1 above.    
+```bash
+from bhtp.github import Github
+from bhtp.universe import TradingUniverse
+import pandas as pd
+
+# Load data to insert into Trading Universe
+g = Github(owner='MapleFrogStudio', repository='DATA-2024-04', branch='main') 
+data_df = g.load_ohlcv_for_month(verbose=True)
+
+# Insert Data into Universe and generate all timeframes
+tu = TradingUniverse()
+tu.insert_data(g_data)
+print(f'1 min timeframe: {len(tu.df_1min)} records')
+print(f'5 min timeframe: {len(tu.df_5min)} records')
+print(f'1 day timeframe: {len(tu.df_1day)} records')

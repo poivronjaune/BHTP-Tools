@@ -11,6 +11,7 @@ def tu1():
     # Default trading universe
     return TradingUniverse()
 
+# To prevent connection not established errors when testing, use a local csv file to load price data
 @pytest.fixture(scope="session")
 def g_data():
     data_df = pd.read_csv('tests/test_data.csv')
