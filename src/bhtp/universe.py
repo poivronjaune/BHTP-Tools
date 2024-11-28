@@ -29,8 +29,8 @@ class TradingUniverse:
         """
         if self.df_1min is None:
             raise ValueError('No minute data available to aggregate.')
-        if timeframe not in ['5min', '15min', '1h','4h', '1D', '1W', '1ME']:
-            raise ValueError("Invalid timeframe target, Use : ['5min', '15min', '1H','4H', '1D', '1W', '1ME']")
+        if timeframe not in ['5min', '15min', '1h', '4h', '1D', '1W', '1ME']:
+            raise ValueError("Invalid timeframe target, Use : ['5min', '15min', '1h','4h', '1D', '1W', '1ME']")
         
         new_timeframe = (
             self.df_1min.groupby('Symbol')
@@ -48,7 +48,7 @@ class TradingUniverse:
         new_timeframe = new_timeframe[['Datetime','Symbol','Open','High','Low','Close','Volume']]
         return new_timeframe  
 
-    def insert_data(self, df_ohlcv: pd.DataFrame) -> None:
+    def insert_data(self, df_ohlcv: pd.DataFrame, freq='all') -> None:
         """
         Inserts minute price data in the trading universe. Dataframe should contain the following columns
         [Datetime, Symbol, Open, High, Low, Close, Volume]. 
@@ -60,6 +60,7 @@ class TradingUniverse:
             Dataframe containing minute price data [Datetime, Symbol, Open, High, Low, Close, Volume]
 
         """
+        valid_freq = ['5min', '15min', '1h', '4h', '1D', '1W', '1ME']
         # Reorganise minute data for Trading Universe structure, sorted, index and columns
         self.df_1min = df_ohlcv
         self.df_1min = self.df_1min.sort_values(by=['Symbol', 'Datetime'])
@@ -67,13 +68,26 @@ class TradingUniverse:
         self.df_1min = self.df_1min[['Datetime','Symbol','Open','High','Low','Close','Volume']]
         self.df_1min.set_index('Datetime', inplace=True)
 
-        self.df_5min = self.timeframe('5min')
-        self.df_15min = self.timeframe('15min')
-        self.df_1hr = self.timeframe('1h')
-        self.df_4hr = self.timeframe('4h')
-        self.df_1day = self.timeframe('1D')
-        self.df_1wk = self.timeframe('1W')
-        self.df_1month = self.timeframe('1ME')      
+        if freq not in valid_freq:
+            return
+        
+        match freq:
+            case '5min' : self.df_5min = self.timeframe('5min')
+            case '15min' : self.df_15min = self.timeframe('15min')
+            case '1h' : self.df_1hr = self.timeframe('1h')
+            case '4h' : self.df_4hr = self.timeframe('4h')
+            case '1D' : self.df_1day = self.timeframe('1D')
+            case '1W' : self.df_1wk = self.timeframe('1W')
+            case '1ME' : self.df_1month = self.timeframe('1ME')      
+            case '_' :
+                self.df_5min = self.timeframe('5min')
+                self.df_15min = self.timeframe('15min')
+                self.df_1hr = self.timeframe('1h')
+                self.df_4hr = self.timeframe('4h')
+                self.df_1day = self.timeframe('1D')
+                self.df_1wk = self.timeframe('1W')
+                self.df_1month = self.timeframe('1ME')      
+
 
     def calculate_indicators(self) -> None:
         """Using data loaded in Universe (1min, 5min, 15min, 1h, 4h, 1d, 1w, 1month) calculate a bunch of indicators.

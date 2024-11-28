@@ -70,10 +70,11 @@ print(master_df.head())
 ### Creating a trading universe  
 ***universe.py*** : Class and methods to build a trading universe.  Load data from local csv files or using the Github class to load directly from Github repositories.  
 
-***Example***  
+***Example 3***  
 To create a bunch of timeframes from our 1 minute price data, load some prices from a month and run the following code.  
 Data source is the same as example 1 above.    
 ```bash
+# examples/demo03.py
 from bhtp.github import Github
 from bhtp.universe import TradingUniverse
 import pandas as pd
@@ -84,7 +85,7 @@ data_df = g.load_ohlcv_for_month(verbose=True)
 
 # Insert Data into Universe and generate all timeframes
 tu = TradingUniverse()
-tu.insert_data(g_data)
+tu.insert_data(data_df)
 print(f'1 min timeframe: {len(tu.df_1min)} records')
 print(f'5 min timeframe: {len(tu.df_5min)} records')
 print(f'1 day timeframe: {len(tu.df_1day)} records')

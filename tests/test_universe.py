@@ -53,7 +53,31 @@ def test_init_setup(tu1):
     assert tu.df_1wk is None
     assert tu.df_1month is None
 
-def test_insert_data(tu1, g_data):
+
+@pytest.mark.parametrize("freq, a1, a2, a3, a4, a5, a6, a7", [
+    ('5min', False, True, True, True, True, True, True),
+    ('15min', True, False, True, True, True, True, True),
+    ('1h', True, True, False, True, True, True, True),
+    ('4h', True, True, True, False, True, True, True),
+    ('1D', True, True, True, True, False, True, True),
+    ('1W', True, True, True, True, True, False, True),
+    ('1ME', True, True, True, True, True, True, False),
+])
+def test_insert_data_specific_timeframe(g_data, freq, a1, a2, a3, a4, a5, a6, a7):
+    tu = TradingUniverse()
+    assert tu is not None
+    assert g_data is not None
+    tu.insert_data(g_data, freq=freq)
+    assert (tu.df_5min is None) == a1
+    assert (tu.df_15min is None) == a2
+    assert (tu.df_1hr is None) == a3
+    assert (tu.df_4hr is None) == a4
+    assert (tu.df_1day is None) == a5
+    assert (tu.df_1wk is None) == a6
+    assert (tu.df_1month is None) == a7
+    del(tu)
+
+def test_insert_data_all_timeframes(tu1, g_data):
     print(f'\n*********\n Loading test data may take 30-60 seconds\n*********\n')
     assert tu1 is not None
     assert tu1.df_1min is None

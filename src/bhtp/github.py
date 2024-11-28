@@ -93,7 +93,7 @@ class Github:
         if folder == '/' or folder == '' or folder is None or not isinstance(folder, str):
             folder = ''
         url = self.api_content + folder
-        content = requests.get(url, timeout=10)
+        content = requests.get(url, timeout=30)
         list_of_json_objects = content.json()
         return list_of_json_objects
 
