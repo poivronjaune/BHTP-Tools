@@ -6,44 +6,26 @@ import pytest
 from bhtp.github import Github
 from bhtp.universe import TradingUniverse
 
-@pytest.fixture(scope="session")
-def tu1():
-    # Default trading universe
-    return TradingUniverse()
-
 # To prevent connection not established errors when testing, use a local csv file to load price data
 @pytest.fixture(scope="session")
 def g_data():
     data_df = pd.read_csv('tests/test_data.csv')
-
-    ####
-    # Remove comments to test directly from github repo.
-    ######
-    #g1 = Github()
-    #data_df = pd.DataFrame()
-    #files = ['NASDAQ-CC0-2023-04-03.csv', 'NASDAQ-BM0-2023-04-22.csv', 'NASDAQ-TE0-2023-04-20.csv'] 
-    #max_retries = 5
-    #for csv_file in files:
-    #    try_to_load = True
-    #    loading_attempt = 1
-    #    while try_to_load:
-    #        try:
-    #            data = g1.load_ohlcv_from_file(csv_file)
-    #            try_to_load = False
-    #        except ConnectionError as e:
-    #            if loading_attempt > max_retries:
-    #                try_to_load = False
-    #                raise ConnectionError(f'{max_retries} retries in test to load github\n{e}')
-    #            loading_attempt += 1
-    #            time.sleep(2)
-    #
-    #    data_df = pd.concat([data_df, data], ignore_index=True)
-    ##    data_df.to_csv('test_data.csv', index=False)
     return data_df
 
+@pytest.fixture(scope="session")
+def tu_empty():
+    # Default trading universe
+    return TradingUniverse()
 
-def test_init_setup(tu1):
-    tu = tu1
+@pytest.fixture(scope="session")
+def tu_loaded(g_data):
+    # Default trading universe
+    tu = TradingUniverse()
+    tu.insert_data(g_data, freq='all')
+    return tu
+
+def test_init_setup(tu_empty):
+    tu = tu_empty
     assert tu.df_1min is None
     assert tu.df_5min is None
     assert tu.df_15min is None
@@ -64,7 +46,7 @@ def test_init_setup(tu1):
     ('1ME', True, True, True, True, True, True, False),
     ('all', False, False, False, False, False, False, False),
 ])
-def test_insert_data_specific_timeframe(g_data, freq, a1, a2, a3, a4, a5, a6, a7):
+def test_insert_data_for_many_timeframes(g_data, freq, a1, a2, a3, a4, a5, a6, a7):
     tu = TradingUniverse()
     assert tu is not None
     assert g_data is not None
@@ -82,5 +64,25 @@ def test_fail_insert_data(g_data):
     tu = TradingUniverse()
     with pytest.raises(Exception) as exc_info:
         tu.insert_data(g_data, freq='Invalid')
-    print(f"Message: {exc_info.value}")
+    print(f"Pytest Message: {exc_info.value}")
+
+@pytest.mark.parametrize("param1", [
+    10,
+    'Hello',
+    None,
+])
+def test_fail_calculate_indicators(g_data, param1):
+    tu = TradingUniverse()
+    with pytest.raises(Exception) as exc_info:
+        tu.calculate_indicators(param1)
+    print(f"Pytest Message: {exc_info.value}")
+
+@pytest.mark.parametrize("indicator, params, columns", [
+    ('sma', [50], ['sma50']),
+    ('rsi', [14], ['gain', 'loss', 'rsi']),
+])
+def test_calculate_indicators(tu_loaded, indicator, params, columns):
+    # Add indicators tests here
+    print(f'\n{indicator}: {len(tu_loaded.df_1min)}, {tu_loaded.df_1min.columns.to_list()}')
+    print(f'\n{indicator}: {len(tu_loaded.df_1day)}, {tu_loaded.df_1day.columns.to_list()}')
 

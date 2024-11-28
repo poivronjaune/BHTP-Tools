@@ -46,6 +46,7 @@ class TradingUniverse:
             .reset_index()            # Reset index to make it a standard DataFrame
         )
         new_timeframe = new_timeframe[['Datetime','Symbol','Open','High','Low','Close','Volume']]
+        new_timeframe.set_index('Datetime', inplace=True)
         return new_timeframe  
 
     def insert_data(self, df_ohlcv: pd.DataFrame, freq='all') -> None:
@@ -89,9 +90,14 @@ class TradingUniverse:
                 self.df_1month = self.timeframe('1ME')      
 
 
-    def calculate_indicators(self) -> None:
+    def calculate_indicators(self, indicators: list) -> None:
         """Using data loaded in Universe (1min, 5min, 15min, 1h, 4h, 1d, 1w, 1month) calculate a bunch of indicators.
         Append all indicators in Universe data as new DataFrame columns.
         """
-        pass
+        if not isinstance(indicators, list):
+            raise ValueError('TradingUnivers.calculate_indicators: bad parameter. use a list of strings.')
+        
+        ## TODO: Implement some indicators
+
+
 
