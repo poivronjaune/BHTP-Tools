@@ -1,29 +1,10 @@
 import time
-from tkinter import N
 import pandas as pd
-from numpy import true_divide
 import pytest
-from bhtp.github import Github
+# from bhtp.github import Github
 from bhtp.universe import TradingUniverse
 
-# To prevent connection not established errors when testing, use a local csv file to load price data
-@pytest.fixture(scope="session")
-def g_data():
-    data_df = pd.read_csv('tests/test_data.csv')
-    return data_df
-
-@pytest.fixture(scope="session")
-def tu_empty():
-    # Default trading universe
-    return TradingUniverse()
-
-@pytest.fixture(scope="session")
-def tu_loaded(g_data):
-    # Default trading universe
-    tu = TradingUniverse()
-    tu.insert_data(g_data, freq='all')
-    return tu
-
+# tu_empty, tu_loaded, g_data are defined as session scope fixtures in conftest.py
 def test_init_setup(tu_empty):
     tu = tu_empty
     assert tu.df_1min is None
