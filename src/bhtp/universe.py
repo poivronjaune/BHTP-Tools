@@ -1,4 +1,5 @@
 import pandas as pd
+import ta
 from bhtp.github import Github
 
 class TradingUniverse:
@@ -51,6 +52,7 @@ class TradingUniverse:
 
     def insert_data(self, df_ohlcv: pd.DataFrame, freq='all') -> None:
         """
+        TODO: Fix insert to append to universe instead of replacing
         Inserts minute price data in the trading universe. Dataframe should contain the following columns
         [Datetime, Symbol, Open, High, Low, Close, Volume]. 
         Use the Github class to load online data from Github repositories. 
@@ -90,14 +92,47 @@ class TradingUniverse:
                 self.df_1month = self.timeframe('1ME')      
 
 
-    def calculate_indicators(self, indicators: list) -> None:
+    def calculate_indicators(self, indicators: list = ['empty']) -> None:
         """Using data loaded in Universe (1min, 5min, 15min, 1h, 4h, 1d, 1w, 1month) calculate a bunch of indicators.
         Append all indicators in Universe data as new DataFrame columns.
         """
+
+        def apply_ta_to_group(group):
+            min_len = 100
+            if len(group) >= min_len:  # Check if the group has enough data (e.g., 5 rows)
+                return ta.add_all_ta_features(group, 
+                                            open="Open", 
+                                            high="High", 
+                                            low="Low", 
+                                            close="Close", 
+                                            volume="Volume", 
+                                            fillna=True)
+            else:
+                # If the group is too small, return the group unchanged
+                return group
+
         if not isinstance(indicators, list):
             raise ValueError('TradingUnivers.calculate_indicators: bad parameter. use a list of strings.')
         
-        ## TODO: Implement some indicators
+        self.df_1min = self.df_1min.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_5min = self.df_5min.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_15min = self.df_15min.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_1hr = self.df_1hr.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_4hr = self.df_4hr.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_1day = self.df_1day.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_1wk = self.df_1wk.groupby('Symbol').apply(apply_ta_to_group)
+        self.df_1month = self.df_1month.groupby('Symbol').apply(apply_ta_to_group)
+
+    def save_universe(self):
+        self.df_1min.to_csv('tu_1min.csv')
+        self.df_5min.to_csv('tu_5min.csv')
+        self.df_15min.to_csv('tu_15min.csv')
+        self.df_1hr.to_csv('tu_1hr.csv')
+        self.df_4hr.to_csv('tu_4hr.csv')
+        self.df_1day.to_csv('tu_1day.csv')
+        self.df_1wk.to_csv('tu_1wk.csv')
+        self.df_1month.to_csv('tu_1month.csv')
+
 
 
 
