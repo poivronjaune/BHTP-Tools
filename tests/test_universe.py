@@ -62,6 +62,7 @@ def test_init_setup(tu1):
     ('1D', True, True, True, True, False, True, True),
     ('1W', True, True, True, True, True, False, True),
     ('1ME', True, True, True, True, True, True, False),
+    ('all', False, False, False, False, False, False, False),
 ])
 def test_insert_data_specific_timeframe(g_data, freq, a1, a2, a3, a4, a5, a6, a7):
     tu = TradingUniverse()
@@ -77,20 +78,9 @@ def test_insert_data_specific_timeframe(g_data, freq, a1, a2, a3, a4, a5, a6, a7
     assert (tu.df_1month is None) == a7
     del(tu)
 
-def test_insert_data_all_timeframes(tu1, g_data):
-    print(f'\n*********\n Loading test data may take 30-60 seconds\n*********\n')
-    assert tu1 is not None
-    assert tu1.df_1min is None
-    assert g_data is not None
-    print(g_data)
-    tu1.insert_data(g_data)
-    assert tu1.df_1min is not None
-    assert tu1.df_5min is not None
-    assert tu1.df_15min is not None
-    assert tu1.df_1hr is not None
-    assert tu1.df_4hr is not None
-    assert tu1.df_1day is not None
-    assert tu1.df_1wk is not None
-    assert tu1.df_1month is not None
-    
-    
+def test_fail_insert_data(g_data):
+    tu = TradingUniverse()
+    with pytest.raises(Exception) as exc_info:
+        tu.insert_data(g_data, freq='Invalid')
+    print(f"Message: {exc_info.value}")
+

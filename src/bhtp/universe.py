@@ -60,7 +60,7 @@ class TradingUniverse:
             Dataframe containing minute price data [Datetime, Symbol, Open, High, Low, Close, Volume]
 
         """
-        valid_freq = ['5min', '15min', '1h', '4h', '1D', '1W', '1ME']
+        valid_freq = ['5min', '15min', '1h', '4h', '1D', '1W', '1ME', 'all']
         # Reorganise minute data for Trading Universe structure, sorted, index and columns
         self.df_1min = df_ohlcv
         self.df_1min = self.df_1min.sort_values(by=['Symbol', 'Datetime'])
@@ -69,7 +69,7 @@ class TradingUniverse:
         self.df_1min.set_index('Datetime', inplace=True)
 
         if freq not in valid_freq:
-            return
+            raise ValueError(f"Invalid 'freq' parameter, use of {valid_freq}")
         
         match freq:
             case '5min' : self.df_5min = self.timeframe('5min')
@@ -79,7 +79,7 @@ class TradingUniverse:
             case '1D' : self.df_1day = self.timeframe('1D')
             case '1W' : self.df_1wk = self.timeframe('1W')
             case '1ME' : self.df_1month = self.timeframe('1ME')      
-            case '_' :
+            case 'all' :
                 self.df_5min = self.timeframe('5min')
                 self.df_15min = self.timeframe('15min')
                 self.df_1hr = self.timeframe('1h')
