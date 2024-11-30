@@ -1,7 +1,9 @@
 import sys
+import os
 import requests
 import re
 import pandas as pd
+import ta
 
 class Github:
     """
@@ -277,17 +279,30 @@ class Github:
         data = pd.DataFrame()
         return data
 
+    def load_ohlcv_from_local_files(self, folder_path:str):    
+        files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+        data_df = pd.DataFrame()
+        for file in files:
+            data = self.load_ohlcv_from_raw_link(file)
+            data_df = pd.concat([data_df, data], ignore_index=True)
+        
+        return data_df
+        return files
+
+
 if __name__ == '__main__':                              # pragma: no cover
     # Example loading a small test file
     # ByPass Github Class config to load a fully qualified raw github url
     #url = ('https://raw.githubusercontent.com/MapleFrogStudio/DATASETS/main/TESTING/OHLCV-valid01.csv')
-    g1 = Github(repository='DATA-2023-04')
-    print(g1)
-    print(g1.api_content)
-    print('======================================')
-    repo_json = g1.repo_content() 
-    print(repo_json[0:4])
-    print('======================================')
+    #g1 = Github(repository='DATA-2023-04')
+    #print(g1)
+    #print(g1.api_content)
+    #print('======================================')
+    #repo_json = g1.repo_content() 
+    #print(repo_json[0:4])
+    #print('======================================')
     #data = g1.load_ohlcv_from_file(csv_file='NASDAQ-CC0-2023-04-03.csv', verbose=True)
     #print(data)
+    pass
 
+    
