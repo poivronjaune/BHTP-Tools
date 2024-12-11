@@ -19,13 +19,14 @@ classifiers = [
 keywords = ["trading", "OHLC", "Minute prices", "Stockmarket"]
 dependencies = [
     "pandas",
-    "ta",
-    "requests"
+    "TA-lib",
+    "requests",
+    "questdb"
 ]
 requires-python = ">3.10"
 
 [project.optional-dependencies]
-build = ["build","twine"]
+build = ["build","twine","wheel", "setuptools"]
 dev = ["black", "pytest", "sphinx", "sphinx-autodoc-typehints", "sphinx-rtd-theme", "recommonmark"]
 
 [tool.setuptools.dynamic]

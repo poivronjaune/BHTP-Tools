@@ -3,7 +3,7 @@ import os
 import requests
 import re
 import pandas as pd
-import ta
+from bhtp import load_prices_from_csv
 
 class Github:
     """
@@ -141,43 +141,6 @@ class Github:
         return raw_urls
 
 
-    def load_ohlcv_from_raw_link(self, github_raw_link):
-        """
-        Loads a CSV file containing OHLCV (Open, High, Low, Close, Volume) formatted data from a GitHub link.
-
-        This function reads a CSV file from the specified GitHub raw URL, validates the presence of required columns 
-        for OHLCV data, and renames the 'Ticker' column to 'Symbol' if necessary. It returns a DataFrame containing 
-        only the relevant columns: 'Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Adj Close', and 'Volume'.
-
-        Parameters:
-        ----------
-        github_raw_link : str
-            The URL of the GitHub raw link pointing to the CSV file to be loaded.
-
-        Returns:
-        -------
-        pd.DataFrame
-            A DataFrame containing the OHLCV data with columns: 'Datetime', 'Symbol', 'Open', 'High', 'Low', 
-            'Close', 'Adj Close', and 'Volume'.
-        """
-        
-        try:
-            df = pd.read_csv(github_raw_link)
-        except Exception as e:
-            raise RuntimeError(f'Unable to read target file, {e}')
-        
-        required_columns = ['Datetime','Open','High','Low','Close','Adj Close','Volume']
-        all_columns_present = all(column in df.columns for column in required_columns)
-        if not all_columns_present:
-            raise RuntimeError(f'CSV file loaded is missing one or more of the following columns {required_columns}.')
-        if not ('Symbol' in df.columns or 'Ticker' in df.columns):
-            raise RuntimeError(f'CSV file loaded is missing one or more of the following columns Symbol or Ticker.')
-        if 'Ticker' in df.columns:
-            df = df.rename(columns={"Ticker": "Symbol"})
-
-        df = df[['Datetime','Symbol', 'Open','High','Low','Close','Adj Close','Volume']]
-        return df
-
     def load_ohlcv_for_month(self, verbose=False):
         """
         Load and aggregate OHLCV data from multiple CSV files for a given month (usually a DATA repo).
@@ -212,7 +175,8 @@ class Github:
         total_files = len(raw_urls)
         month_df = pd.DataFrame()       # Initialize an empty Dataframe to append each file loaded in the month repo
         for i, raw_link in enumerate(raw_urls, start=1):
-            data_df = self.load_ohlcv_from_raw_link(raw_link)
+            #data_df = self.load_ohlcv_from_raw_link(raw_link)
+            data_df = load_prices_from_csv(raw_link)
             month_df = pd.concat([month_df, data_df], ignore_index=True)
             if verbose:
                 print(f'{i}/{total_files} : {raw_link}')
@@ -250,7 +214,8 @@ class Github:
             raise ValueError(f"Not Found - Unable to find {csv_file_name} in {self.repo}")         
         
         raw_urls = self.select_files(repo_content=json_content) 
-        df = self.load_ohlcv_from_raw_link(raw_urls[index])
+        #df = self.load_ohlcv_from_raw_link(raw_urls[index])
+        df = load_prices_from_csv(raw_urls[index])
 
         return df
 
@@ -279,17 +244,6 @@ class Github:
         data = pd.DataFrame()
         return data
 
-    def load_ohlcv_from_local_files(self, folder_path:str):    
-        files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
-        data_df = pd.DataFrame()
-        for file in files:
-            data = self.load_ohlcv_from_raw_link(file)
-            data_df = pd.concat([data_df, data], ignore_index=True)
-        
-        return data_df
-        return files
-
-
 if __name__ == '__main__':                              # pragma: no cover
     # Example loading a small test file
     # ByPass Github Class config to load a fully qualified raw github url
@@ -300,9 +254,7 @@ if __name__ == '__main__':                              # pragma: no cover
     #print('======================================')
     #repo_json = g1.repo_content() 
     #print(repo_json[0:4])
-    #print('======================================')
-    #data = g1.load_ohlcv_from_file(csv_file='NASDAQ-CC0-2023-04-03.csv', verbose=True)
-    #print(data)
+
     pass
 
     

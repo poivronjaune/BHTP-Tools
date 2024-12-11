@@ -1,10 +1,10 @@
 import pandas as pd
-import ta
+import talib as ta
 # possible migration to : https://github.com/TA-Lib/ta-lib-python
 
 class Indicators:
     def __init__(self):
-        pass
+        self.msg = 'Hello World, please finih my class, definition'
    
 
 

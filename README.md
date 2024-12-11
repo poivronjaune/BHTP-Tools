@@ -89,3 +89,16 @@ tu.insert_data(data_df)
 print(f'1 min timeframe: {len(tu.df_1min)} records')
 print(f'5 min timeframe: {len(tu.df_5min)} records')
 print(f'1 day timeframe: {len(tu.df_1day)} records')
+```
+ 
+## External links  
+[TA-Lib details](https://ta-lib.github.io/ta-lib-python/index.html) : C Library called by TA-Lib python wrapper.   
+[TA-Lib Wheels](https://github.com/cgohlke/talib-build) : Download a binary version based on your python version.  
+- Python 3.13 : adjust requirements.txt to install -> ./wheels/ta_lib-0.5.1-cp**313**-cp**313**-win_amd64.whl  
+- Python 3.12 : adjust requirements.txt to install -> ./wheels/ta_lib-0.5.1-cp**312**-cp**312**-win_amd64.whl  
+  
+[QuestDB](https://questdb.io/) Timeseries Database for high performance data analysis instead of using raw cvs Files   
+[QuestDB Python package](https://py-questdb-client.readthedocs.io/en/latest/index.html) Python package to ingest (load into DB) data.  
+- This package usually does not work with the latest version of python  
+- Use "py" launcher to setup a specific version of python and the associated environment.  
+- py -v3.12 -m venv env for example.

@@ -1,5 +1,6 @@
 import time
 import pytest
+from bhtp import load_prices_from_csv
 from bhtp.github import Github
 
 @pytest.fixture(scope="session")
@@ -65,7 +66,8 @@ def test_Github_load_ohlcv_from_raw_link(owner, repo, branch, csv_file):
     raw_link = f'https://raw.githubusercontent.com/{owner}/{repo}/refs/heads/{branch}/{csv_file}'
     g3 = Github(owner=owner, repository=repo, branch=branch)
     assert g3 is not None
-    df = g3.load_ohlcv_from_raw_link(raw_link)
+    #df = g3.load_ohlcv_from_raw_link(raw_link)
+    df = load_prices_from_csv(raw_link)
     assert df is not None
     assert len(df) > 1000
 
@@ -78,6 +80,7 @@ def test_fail_Github_load_ohlcv_from_raw_link(owner, repo, branch, csv_file):
     g4 = Github(owner=owner, repository=repo, branch=branch)
     with pytest.raises(Exception):
         df = g4.load_ohlcv_from_raw_link(raw_link)
+        df = load_prices_from_csv(raw_link)
 
 def test_fail_Github_sanity_check_load_ohlcv_for_month():
     #g1 = Github()

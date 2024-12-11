@@ -1,4 +1,4 @@
-# possible migration to : https://github.com/TA-Lib/ta-lib-python
+# BAD IMPLEMENTATION - Out of Memory Error because too much data is loaded at once
 
 import datetime
 import os

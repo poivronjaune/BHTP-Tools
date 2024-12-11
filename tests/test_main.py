@@ -11,3 +11,7 @@ def test_version():
 def test_get_version():
     assert bhtp.get_version() is not None
  
+def test_load_ohclv_from_file():
+    local_file_path = '.\\tests\\test_data.csv'
+    df = bhtp.load_prices_from_csv(local_file_path)
+    assert df is not None

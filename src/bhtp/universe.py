@@ -1,5 +1,5 @@
 import pandas as pd
-import ta
+import talib as ta
 from bhtp.github import Github
 
 class TradingUniverse:
