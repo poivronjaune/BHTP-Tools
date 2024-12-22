@@ -19,7 +19,8 @@ classifiers = [
 keywords = ["trading", "OHLC", "Minute prices", "Stockmarket"]
 dependencies = [
     "pandas",
-    "requests"
+    "requests",
+    "yfinance"
 ]
 requires-python = ">3.10"
 
