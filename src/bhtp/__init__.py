@@ -2,6 +2,7 @@ __version__ = "0.1.0"
 version = __version__
 
 import pandas as pd
+import requests
 
 def get_version():
     """

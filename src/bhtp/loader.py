@@ -1,3 +1,4 @@
+from configparser import NoOptionError
 import os
 import pandas as pd
 from bhtp import load_prices_from_csv
@@ -54,10 +55,12 @@ class Loader:
                 break
 
         return data_df
-    
+
+
 if __name__ == '__main__':
     print('======================================')
-    folder_to_load = 'DATA-2023-03'
+    #folder_to_load = 'DATA-2023-03'
     l = Loader('D:\\stockdata')
-    data_df = l.load_files_from_folder(folder_path=folder_to_load, verbose=True)
-    print(data_df) 
+    #data_df = l.load_files_from_folder(folder_path=folder_to_load, verbose=True)
+    #print(data_df) 
+
