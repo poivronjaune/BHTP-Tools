@@ -69,6 +69,16 @@ def get_local_data(file_name):
 
 
 
+# TODO:
+# Code to make sure datetime is always localized to help normalise our data
+#
+# df.set_index('Datetime', inplace=True)
+# try:
+#     df.index = df.index.tz_localize('UTC')
+# except:
+#     df.index = df.index.tz_convert('UTC')
+# print(f'After normalisation: {df.columns}')
+
 
 
 
