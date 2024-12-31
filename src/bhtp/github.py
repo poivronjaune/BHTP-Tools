@@ -5,7 +5,7 @@ import pandas as pd
 
 class Github:
     """
-    A utility class for retrieving information and links from a specified GitHub repository.
+    A utility class for retrieving information and links from a specified GitHub repository (single file load from link available in data module).
 
     This class allows users to interact with a GitHub repository by providing methods to:
     - Retrieve the content of a specific folder within the repository.
@@ -201,10 +201,6 @@ class Github:
         >>> df = github.load_ohlcv_for_month(verbose=True)
         >>> print(df.head())
         """
-#        if year < 2023 or month < 1 or month > 12:
-#            raise ValueError(f"{year}-{month}, year must be 2023 or higher, month must be between 1 and 12.")
-#        file_name = f"DATA-{year:4}-{month:02}"
-#        self.repo  = file_name
         json_content = self.repo_content()
         raw_urls = self.select_files(repo_content=json_content)
         total_files = len(raw_urls)

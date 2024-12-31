@@ -2,8 +2,9 @@ import pandas as pd
 from bhtp.github import Github
 
 class TradingUniverse:
-    """Trading Universe Class contains all trading information to simulate a trading environnement 
-       with price data including multiple timeframes.
+    """WORK IN PROGRESS
+    Trading Universe Class contains all trading information to simulate a trading environnement 
+    with price data including multiple timeframes.
     """
 
     def __init__(self):
