@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bhtp"
 dynamic = ["version"]
-description = "Package to mnsge tools for trading using the BHTP Platform"
+description = "Package to manage tools for trading using the BHTP Platform"
 readme = "README.md"
 authors = [
     {name = "PoivronJaune", email="poivronjaune@gmail.com"}
