@@ -20,7 +20,8 @@ keywords = ["trading", "OHLC", "Minute prices", "Stockmarket"]
 dependencies = [
     "pandas",
     "requests",
-    "yfinance"
+    "yfinance",
+    "matplotlib"
 ]
 requires-python = ">3.10"
 
